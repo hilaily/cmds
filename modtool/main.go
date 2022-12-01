@@ -24,7 +24,7 @@ func do(typ string, cmd string) {
 			pRed(err.Error())
 			return
 		}
-		t.do(cmd)
+		t.do(cmd, os.Args[3:]...)
 	default:
 		logrus.Errorf("type is wrong")
 	}

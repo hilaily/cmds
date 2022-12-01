@@ -1,15 +1,15 @@
 package main
 
-import "github.com/sirupsen/logrus"
+import "log"
 
 func pRed(format string, a ...any) {
-	logrus.Errorf(format, a...)
+	log.Printf(format, a...)
 }
 
 func pGreen(format string, a ...any) {
-	logrus.Infof(format, a...)
+	log.Printf(format, a...)
 }
 
 func pNomarl(format string, a ...any) {
-	logrus.Printf(format+"\n", a...)
+	log.Printf(format+"\n", a...)
 }

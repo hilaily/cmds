@@ -22,7 +22,8 @@ func (m *mod) getModPrefix(repoPath, modName string) string {
 	return strings.ReplaceAll(modName, repoPath+"/", "")
 }
 
-func (m *mod) getImportPath(gitRepoURL string) string {
+func (m *mod) getRepoPath(gitRepoURL string) string {
+	gitRepoURL = strings.TrimSpace(gitRepoURL)
 	if strings.HasPrefix(gitRepoURL, "http") {
 		// https://github.com/hilaily/cmds.git
 		u := strings.TrimSuffix(gitRepoURL, ".git")

@@ -3,9 +3,11 @@ module github.com/hilaily/cmds/modtool
 go 1.19
 
 require (
+	github.com/Masterminds/semver v1.5.0
 	github.com/hilaily/kit v0.5.31
 	github.com/hilaily/lib/logrustool v0.2.0
 	github.com/sirupsen/logrus v1.9.0
+	github.com/spf13/cast v1.5.0
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/mod v0.7.0
 )
