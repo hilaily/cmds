@@ -10,7 +10,7 @@ import (
 	"golang.org/x/mod/modfile"
 )
 
-func findModFile() (string, error) {
+func (m *mod) findModFile() (string, error) {
 	cur, err := os.Getwd()
 	if err != nil {
 		return "", err
@@ -22,7 +22,7 @@ func findModFile() (string, error) {
 		exist = pathx.IsExist(f)
 		logrus.Debugf("file: %s, exist: %v", f, exist)
 		if exist {
-			return cur, nil
+			return f, nil
 		}
 		if cur == "/" {
 			break
@@ -32,7 +32,7 @@ func findModFile() (string, error) {
 	return cur, fmt.Errorf("can not find go.mod")
 }
 
-func getModName(modPath string) (string, error) {
+func (m *mod) getModName(modPath string) (string, error) {
 	en, err := os.ReadFile(modPath)
 	if err != nil {
 		return "", err

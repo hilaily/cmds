@@ -1,4 +1,4 @@
-module github.com/hilaily/cmds/gotool
+module github.com/hilaily/cmds/modtool
 
 go 1.19
 

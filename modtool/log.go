@@ -6,5 +6,6 @@ import (
 )
 
 func init() {
-	logrustool.SetLevel(logrus.DebugLevel)
+	logrustool.FormatOnlyMsg()
+	logrustool.SetLevel(logrus.InfoLevel)
 }

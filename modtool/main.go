@@ -1,13 +1,31 @@
 package main
 
-func main() {
+import (
+	"os"
 
+	"github.com/sirupsen/logrus"
+)
+
+func main() {
+	l := len(os.Args)
+	if l < 3 {
+		logrus.Error("arguments wrong")
+	}
+	typ := os.Args[1]
+	cmd := os.Args[2]
+	do(typ, cmd)
 }
 
-/*
-	1. in pkg/mod
-		rm go/pkg/mod/github.com/test/pkgname@v1.0.1/
-    2. in pkg/mod/cache/download
-		rm go/pkg/mod/cache/download/github.com/pkg/testname/@v/v0.0.0-20221121103753-fdd8a8e680aa.lock
-    3. in pkg/mod/cache/vcs
-*/
+func do(typ string, cmd string) {
+	switch typ {
+	case "tag":
+		t, err := newTag()
+		if err != nil {
+			pRed(err.Error())
+			return
+		}
+		t.do(cmd)
+	default:
+		logrus.Errorf("type is wrong")
+	}
+}

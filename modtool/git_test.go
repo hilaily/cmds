@@ -6,17 +6,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetGitRepoPath(t *testing.T) {
-	g := &git{}
-	data := []struct {
-		origin string
-		exp    string
-	}{
-		{origin: "git@github.com:hilaily/cmds.git", exp: "github.com/hilaily/cmds"},
-		{origin: "https://github.com/hilaily/cmds.git", exp: "github.com/hilaily/cmds"},
-	}
-	for _, v := range data {
-		res := g.getRepoPath(v.origin)
-		assert.Equal(t, v.exp, res)
-	}
+func TestGetLocalTags(t *testing.T) {
+	g := newGit()
+	_, err := g.getLocalTags("")
+	assert.NoError(t, err)
+}
+
+func TestGetRemoteTags(t *testing.T) {
+	g := newGit()
+	_, err := g.getRemoteTags("")
+	assert.NoError(t, err)
 }
