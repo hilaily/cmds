@@ -19,6 +19,9 @@ type mod struct {
 func (m *mod) getModPrefix(repoPath, modName string) string {
 	// https://github.com/hilaily/cmds.git
 	// module github.com/hilaily/cmds/gotool
+	if modName == repoPath {
+		return ""
+	}
 	return strings.ReplaceAll(modName, repoPath+"/", "")
 }
 

@@ -38,10 +38,14 @@ func (g *git) getRemoteTags(prefix string) ([]string, error) {
 		}
 		vv := strings.Fields(v)
 		t := strings.ReplaceAll(vv[1], "refs/tags/", "")
-		if prefix == "" || strings.HasPrefix(t, prefix) {
+		logrus.Debugf("remote res: %v", t)
+		if prefix == "" && !strings.Contains(t, "/") ||
+			prefix != "" && strings.HasPrefix(t, prefix) {
+			logrus.Debugf("remote res in: %v", t)
 			ret = append(ret, t)
 		}
 	}
+	logrus.Debugf("tags: %v", ret)
 	return ret, nil
 }
 
@@ -56,7 +60,8 @@ func (g *git) getLocalTags(prefix string) ([]string, error) {
 		if len(v) == 0 {
 			continue
 		}
-		if prefix == "" || strings.HasPrefix(v, prefix) {
+		if prefix == "" && !strings.Contains(v, "/") ||
+			prefix != "" && strings.HasPrefix(v, prefix) {
 			ret = append(ret, v)
 		}
 	}

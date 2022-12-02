@@ -134,7 +134,12 @@ func (t *tag) newTag(typ verType, push bool) {
 		pRed(err.Error())
 		return
 	}
-	newTag := modPrefix + "/v" + v.String()
+	var newTag string
+	if modPrefix == "" {
+		newTag = "v" + v.String()
+	} else {
+		newTag = modPrefix + "/v" + v.String()
+	}
 	pNomarl("new tag is: %s", newTag)
 	if push {
 		pNomarl("try to add new tag")
