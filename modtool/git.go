@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hilaily/kit/listx"
 	"github.com/sirupsen/logrus"
 )
 
@@ -28,7 +29,7 @@ func (g *git) getRepoURL() (string, error) {
 func (g *git) getRemoteTags(prefix string) ([]string, error) {
 	res, err := exec("git ls-remote --tags " + g.upstream)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get remote tags, output: %s, %w", string(res), err)
 	}
 	arr := strings.Split(string(res), "\n")
 	ret := make([]string, 0, len(arr))
@@ -38,6 +39,7 @@ func (g *git) getRemoteTags(prefix string) ([]string, error) {
 		}
 		vv := strings.Fields(v)
 		t := strings.ReplaceAll(vv[1], "refs/tags/", "")
+		t = strings.TrimSuffix(t, "^{}")
 		logrus.Debugf("remote res: %v", t)
 		if prefix == "" && !strings.Contains(t, "/") ||
 			prefix != "" && strings.HasPrefix(t, prefix) {
@@ -45,6 +47,7 @@ func (g *git) getRemoteTags(prefix string) ([]string, error) {
 			ret = append(ret, t)
 		}
 	}
+	ret = listx.Dedup(ret)
 	logrus.Debugf("tags: %v", ret)
 	return ret, nil
 }
@@ -65,6 +68,7 @@ func (g *git) getLocalTags(prefix string) ([]string, error) {
 			ret = append(ret, v)
 		}
 	}
+	ret = listx.Dedup(ret)
 	logrus.Debugf("local tags: %#+v", ret)
 	return ret, nil
 }

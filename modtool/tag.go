@@ -100,16 +100,28 @@ func (t *tag) show() {
 		pRed("get remote tags err: %s", err.Error())
 		return
 	}
+	r, err = sortVer(prefix, r)
+	if err != nil {
+		pRed("get remote tags err: %s", err.Error())
+		return
+	}
 	logrus.Debugf("remote tags: %v", r)
 	pNomarl("remote tags: ")
-	pNomarl(strings.Join(r, "\t"))
+	pTable(r)
+	//pNomarl(strings.Join(r, "\t\t"))
 	pNomarl("local tags: ")
 	r, err = t.git.getLocalTags(prefix)
 	if err != nil {
 		pRed("get remote tags err: %s", err.Error())
 		return
 	}
-	pNomarl(strings.Join(r, "\t"))
+	r, err = sortVer(prefix, r)
+	if err != nil {
+		pRed("get remote tags err: %s", err.Error())
+		return
+	}
+	pTable(r)
+	//pNomarl(strings.Join(r, "\t\t"))
 }
 
 func (t *tag) newTag(typ verType, push bool) {

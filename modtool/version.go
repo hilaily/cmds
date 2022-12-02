@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/Masterminds/semver"
@@ -21,7 +22,7 @@ type verType string
 func newVersion(ver string) (*version, error) {
 	v, err := semver.NewVersion(ver)
 	if err != nil {
-		return nil, fmt.Errorf("parse version fail %w", err)
+		return nil, fmt.Errorf("parse version fail, ver: %s, %w", ver, err)
 	}
 	return &version{Version: v}, nil
 }
@@ -71,6 +72,25 @@ func max(ver []string, preReleasePrefix string) (*version, bool, error) {
 	}
 	// 3. if there is a max pre, and max normal < max pre, like v1.2.1,v1.2.2-pre10.
 	return maxOfPre, true, nil
+}
+
+func sortVer(prefix string, ver []string) ([]string, error) {
+	arr := make([]*semver.Version, 0, len(ver))
+	for _, v := range ver {
+		vv, err := semver.NewVersion(strings.TrimPrefix(v, prefix+"/"))
+		if err != nil {
+			return nil, fmt.Errorf("parse version fail, ver: %s,%w", ver, err)
+		}
+		arr = append(arr, vv)
+	}
+	sort.Slice(arr, func(i, j int) bool {
+		return arr[i].Compare(arr[j]) > 0
+	})
+	arr2 := make([]string, 0, len(arr))
+	for _, v := range arr {
+		arr2 = append(arr2, prefix+"/"+v.Original())
+	}
+	return arr2, nil
 }
 
 func parseVer(ver []string) ([]*version, error) {
