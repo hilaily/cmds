@@ -3,29 +3,35 @@ package main
 import (
 	"os"
 
+	"github.com/hilaily/lib/logrustool"
 	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli/v2"
 )
 
 func main() {
-	l := len(os.Args)
-	if l < 3 {
-		logrus.Error("arguments wrong")
+	app := &cli.App{
+		Name:  "modtool",
+		Usage: "some tools to make golang module friendly",
+		Commands: []*cli.Command{
+			tagCommand(),
+		},
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:        "log",
+				DefaultText: "false",
+				Usage:       "print debug log",
+			},
+		},
+		Before: func(c *cli.Context) error {
+			if c.Bool("log") {
+				logrustool.SetLevel(logrus.DebugLevel)
+			}
+			return nil
+		},
+		Version: "v0.0.1",
 	}
-	typ := os.Args[1]
-	cmd := os.Args[2]
-	do(typ, cmd)
-}
 
-func do(typ string, cmd string) {
-	switch typ {
-	case "tag":
-		t, err := newTag()
-		if err != nil {
-			pRed(err.Error())
-			return
-		}
-		t.do(cmd, os.Args[3:]...)
-	default:
-		logrus.Errorf("type is wrong")
+	if err := app.Run(os.Args); err != nil {
+		pRed(err.Error())
 	}
 }

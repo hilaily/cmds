@@ -1,15 +1,15 @@
 package main
 
-import "log"
+import "fmt"
 
 func pRed(format string, a ...any) {
-	log.Printf(format, a...)
+	fmt.Printf(format, a...)
 }
 
 func pGreen(format string, a ...any) {
-	log.Printf(format, a...)
+	fmt.Printf(format, a...)
 }
 
 func pNomarl(format string, a ...any) {
-	log.Printf(format+"\n", a...)
+	fmt.Printf(format+"\n", a...)
 }

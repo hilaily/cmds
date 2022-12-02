@@ -6,7 +6,69 @@ import (
 
 	"github.com/hilaily/kit/listx"
 	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli/v2"
 )
+
+func tagCommand() *cli.Command {
+	return &cli.Command{
+		Name:  "tag",
+		Usage: "for create or show git tag of this go module",
+		Subcommands: []*cli.Command{
+			tagShowCommand(),
+			tagNewCommand(),
+		},
+	}
+}
+
+func tagShowCommand() *cli.Command {
+	return &cli.Command{
+		Name:  "show",
+		Usage: "show git tag of this go module",
+		Action: func(*cli.Context) error {
+			t, err := newTag()
+			if err != nil {
+				pRed(err.Error())
+				return err
+			}
+			t.show()
+			return nil
+		},
+	}
+}
+
+func tagNewCommand() *cli.Command {
+	return &cli.Command{
+		Name:  "new",
+		Usage: "create a new git tag of this go module",
+		Description: `For example:
+modtool tag new minor
+modtool tag new patch 
+modtool tag new alpha
+modtool tag new pre -p=false`,
+		ArgsUsage: "specify type of version, like major/minor/patch and pre release version prefix",
+		Action: func(c *cli.Context) error {
+			t, err := newTag()
+			if err != nil {
+				pRed(err.Error())
+				return err
+			}
+			typ := c.Args().Get(0)
+			if typ == "" {
+				return fmt.Errorf("you should specify what type of version(mojor/minor/pre)\nlike modtool tag new patch")
+			}
+			t.newTag(verType(typ), c.Bool("push"))
+			return nil
+		},
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:        "push",
+				Aliases:     []string{"p"},
+				DefaultText: "true",
+				Usage:       "get new tag name, add tag and push to git remote",
+			},
+		},
+	}
+}
 
 func newTag() (*tag, error) {
 	m, err := newMod()
@@ -24,18 +86,6 @@ type tag struct {
 	mod        *mod
 	git        *git
 	_modPrefix string
-}
-
-func (t *tag) do(cmd string, args ...string) {
-	switch cmd {
-	case "show":
-		t.show()
-	case "new":
-		t.newTag(args...)
-	default:
-		t.help()
-	}
-
 }
 
 func (t *tag) show() {
@@ -61,19 +111,8 @@ func (t *tag) show() {
 	pNomarl(strings.Join(r, "\t"))
 }
 
-func (t *tag) newTag(args ...string) {
-	l := len(args)
-	var typ verType
-	var push bool
-	switch l {
-	case 1:
-		typ = verType(args[0])
-	case 2:
-		typ = verType(args[0])
-		push = args[1] == "push"
-	default:
-		pRed("args is wrong, %v", args)
-	}
+func (t *tag) newTag(typ verType, push bool) {
+	logrus.Debugf("get push: %v", push)
 	tags, err := t.getAllTags()
 	if err != nil {
 		pRed(err.Error())
@@ -105,10 +144,6 @@ func (t *tag) newTag(args ...string) {
 			pNomarl(res)
 		}
 	}
-}
-
-func (t *tag) help() {
-	logrus.Info("this is a help")
 }
 
 func (t *tag) newTagVersion(tags []string, typ verType, preReleasePrefix string) (*version, error) {

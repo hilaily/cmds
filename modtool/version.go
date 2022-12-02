@@ -121,7 +121,18 @@ func (v *version) inc(typ verType, preReleasePrefix string) *version {
 	}
 	pre := v.Prerelease()
 	logrus.Debugf("inc: %s,%s", preReleasePrefix, pre)
-	if pre != "" || strings.HasPrefix(pre, preReleasePrefix) {
+	// pre is emtpy, like exist pre: v0.0.1, prefix: beta
+	if pre == "" {
+		vv, _ = v.SetPrerelease(preReleasePrefix + "01")
+		return &version{Version: &vv}
+	}
+	// exist pre doesn't have prefix, like exist pre: v0.0.1-beta01, prefix: alpha
+	if !strings.HasPrefix(pre, preReleasePrefix) {
+		vv, _ = v.SetPrerelease(preReleasePrefix + "01")
+		return &version{Version: &vv}
+	}
+	// exist pre has prefix, like exist pre: v0.0.1-alpha01, prefix: alpha
+	if strings.HasPrefix(pre, preReleasePrefix) {
 		preLast := strings.ReplaceAll(pre, preReleasePrefix, "")
 		i, err := cast.ToIntE(preLast)
 		if err != nil {
