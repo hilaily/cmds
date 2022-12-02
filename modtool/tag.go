@@ -31,7 +31,7 @@ func (t *tag) do(cmd string, args ...string) {
 	case "show":
 		t.show()
 	case "newtag":
-		t.newTag(verType(args[0]))
+		t.newTag(args...)
 	default:
 		t.help()
 	}
@@ -61,7 +61,19 @@ func (t *tag) show() {
 	pNomarl(strings.Join(r, "\t"))
 }
 
-func (t *tag) newTag(typ verType) {
+func (t *tag) newTag(args ...string) {
+	l := len(args)
+	var typ verType
+	var push bool
+	switch l {
+	case 1:
+		typ = verType(args[0])
+	case 2:
+		typ = verType(args[0])
+		push = args[1] == "push"
+	default:
+		pRed("args is wrong, %v", args)
+	}
 	tags, err := t.getAllTags()
 	if err != nil {
 		pRed(err.Error())
@@ -82,7 +94,17 @@ func (t *tag) newTag(typ verType) {
 		pRed(err.Error())
 		return
 	}
-	pNomarl(modPrefix + "/v" + v.String())
+	newTag := modPrefix + "/v" + v.String()
+	pNomarl("new tag is: %s", newTag)
+	if push {
+		pNomarl("try to add new tag")
+		res, err := t.git.pushNewTag(newTag)
+		if err != nil {
+			pRed("push new tag fail, %s", err.Error())
+		} else {
+			pNomarl(res)
+		}
+	}
 }
 
 func (t *tag) help() {

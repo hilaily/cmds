@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -61,4 +62,18 @@ func (g *git) getLocalTags(prefix string) ([]string, error) {
 	}
 	logrus.Debugf("local tags: %#+v", ret)
 	return ret, nil
+}
+
+func (g *git) pushNewTag(tag string) (string, error) {
+	c := fmt.Sprintf("git tag %s && git push %s %s", tag, g.upstream, tag)
+	res, err := exec(c)
+	return string(res), err
+	/*
+		res, err := exec("git tag " + tag)
+		if err != nil {
+			return "", fmt.Errorf("new tag fail %w", err)
+		}
+		res2, err = exec(fmt.Sprintf("git push %s %s", g.upstream, tag))
+		return string(res) + "\n" + string(res2), err
+	*/
 }

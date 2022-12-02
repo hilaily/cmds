@@ -16,7 +16,7 @@ func TestGetGitRepoPath(t *testing.T) {
 		{origin: "https://github.com/hilaily/cmds.git", exp: "github.com/hilaily/cmds"},
 	}
 	for _, v := range data {
-		res := g.getRepoPath(v.origin)
+		res := m.getRepoPath(v.origin)
 		assert.Equal(t, v.exp, res)
 	}
 }
