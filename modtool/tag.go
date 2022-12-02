@@ -109,7 +109,7 @@ func (t *tag) show() {
 	pNomarl("remote tags: ")
 	pTable(r)
 	//pNomarl(strings.Join(r, "\t\t"))
-	pNomarl("local tags: ")
+	pNomarl("\nlocal tags: ")
 	r, err = t.git.getLocalTags(prefix)
 	if err != nil {
 		pRed("get remote tags err: %s", err.Error())
