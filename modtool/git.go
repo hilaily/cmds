@@ -37,11 +37,11 @@ func (g *git) getRemoteTags(prefix string) ([]string, error) {
 			continue
 		}
 		vv := strings.Fields(v)
-		if prefix == "" || strings.HasPrefix(vv[1], prefix) {
-			ret = append(ret, strings.ReplaceAll(vv[1], "refs/tags/", ""))
+		t := strings.ReplaceAll(vv[1], "refs/tags/", "")
+		if prefix == "" || strings.HasPrefix(t, prefix) {
+			ret = append(ret, t)
 		}
 	}
-	logrus.Debugf("tags: %v", ret)
 	return ret, nil
 }
 

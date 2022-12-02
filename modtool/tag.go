@@ -44,7 +44,7 @@ func tagNewCommand() *cli.Command {
 modtool tag new minor
 modtool tag new patch 
 modtool tag new alpha
-modtool tag new pre -p=false`,
+modtool tag new -p=false beta`,
 		ArgsUsage: "specify type of version, like major/minor/patch and pre release version prefix",
 		Action: func(c *cli.Context) error {
 			t, err := newTag()
@@ -61,10 +61,10 @@ modtool tag new pre -p=false`,
 		},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
-				Name:        "push",
-				Aliases:     []string{"p"},
-				DefaultText: "true",
-				Usage:       "get new tag name, add tag and push to git remote",
+				Name:    "push",
+				Aliases: []string{"p"},
+				Value:   true,
+				Usage:   "get new tag name, add tag and push to git remote",
 			},
 		},
 	}
@@ -95,12 +95,13 @@ func (t *tag) show() {
 		return
 	}
 	logrus.Debugf("mod prefix: %s", prefix)
-	pNomarl("remote tags: ")
 	r, err := t.git.getRemoteTags(prefix)
 	if err != nil {
 		pRed("get remote tags err: %s", err.Error())
 		return
 	}
+	logrus.Debugf("remote tags: %v", r)
+	pNomarl("remote tags: ")
 	pNomarl(strings.Join(r, "\t"))
 	pNomarl("local tags: ")
 	r, err = t.git.getLocalTags(prefix)
