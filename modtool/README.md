@@ -1,6 +1,12 @@
 # Modtool
 
-## tag
+## Install
+
+```shell
+go install github.com/hilaily/cmds/modtool@latest
+```
+
+## tag subcommand
 
 ### [show] show remote tags and local tags
 

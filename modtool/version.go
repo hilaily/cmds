@@ -28,7 +28,7 @@ func newVersion(ver string) (*version, error) {
 }
 
 // Return 2: if it has max tags
-func max(ver []string, preReleasePrefix string) (*version, bool, error) {
+func latest(ver []string, preReleasePrefix string) (*version, bool, error) {
 	if len(ver) == 0 {
 		return nil, false, nil
 	}
@@ -126,6 +126,13 @@ type version struct {
 	*semver.Version
 }
 
+func (v *version) String(modPrefix string) string {
+	if modPrefix == "" {
+		return "v" + v.Version.String()
+	}
+	return modPrefix + "/v" + v.Version.String()
+}
+
 func (v *version) inc(typ verType, preReleasePrefix string) *version {
 	var vv semver.Version
 	switch typ {
@@ -143,7 +150,8 @@ func (v *version) inc(typ verType, preReleasePrefix string) *version {
 	logrus.Debugf("inc: %s,%s", preReleasePrefix, pre)
 	// pre is emtpy, like exist pre: v0.0.1, prefix: beta
 	if pre == "" {
-		vv, _ = v.SetPrerelease(preReleasePrefix + "01")
+		vv = v.IncPatch()
+		vv, _ = vv.SetPrerelease(preReleasePrefix + "01")
 		return &version{Version: &vv}
 	}
 	// exist pre doesn't have prefix, like exist pre: v0.0.1-beta01, prefix: alpha

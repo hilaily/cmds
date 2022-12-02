@@ -3,22 +3,27 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"text/tabwriter"
 
 	"github.com/buger/goterm"
+	"github.com/fatih/color"
 	"github.com/sirupsen/logrus"
 )
 
 func pRed(format string, a ...any) {
-	fmt.Printf(format, a...)
+	color.Red(format, a...)
 }
 
-func pGreen(format string, a ...any) {
-	fmt.Printf(format, a...)
+func pBlue(format string, a ...any) {
+	color.Blue(format, a...)
 }
 
 func pNomarl(format string, a ...any) {
-	fmt.Printf(format+"\n", a...)
+	if !strings.HasSuffix(format, "\n") {
+		format += "\n"
+	}
+	fmt.Printf(format, a...)
 }
 
 func pTable(data []string) {

@@ -106,10 +106,10 @@ func (t *tag) show() {
 		return
 	}
 	logrus.Debugf("remote tags: %v", r)
-	pNomarl("remote tags: ")
+	pBlue("remote tags: ")
 	pTable(r)
 	//pNomarl(strings.Join(r, "\t\t"))
-	pNomarl("\nlocal tags: ")
+	pBlue("\nlocal tags: ")
 	r, err = t.git.getLocalTags(prefix)
 	if err != nil {
 		pRed("get remote tags err: %s", err.Error())
@@ -141,41 +141,51 @@ func (t *tag) newTag(typ verType, push bool) {
 	logrus.Debugf("remove prefix tags: %v", removePrefixTags)
 
 	preReleasePrefix := string(typ)
-	v, err := t.newTagVersion(removePrefixTags, typ, preReleasePrefix)
+	v, latest, err := t.newTagVersion(removePrefixTags, typ, preReleasePrefix)
 	if err != nil {
 		pRed(err.Error())
 		return
 	}
-	var newTag string
-	if modPrefix == "" {
-		newTag = "v" + v.String()
+	newTag := v.String(modPrefix)
+	if latest == nil {
+		pBlue("there is no old tags")
 	} else {
-		newTag = modPrefix + "/v" + v.String()
+		pBlue("latset tag is:\n")
+		pNomarl("    %s\n", latest.String(modPrefix))
 	}
-	pNomarl("new tag is: %s", newTag)
+	pBlue("will create tag:\n")
+	pNomarl("    %s\n", newTag)
 	if push {
-		pNomarl("try to add new tag")
-		res, err := t.git.pushNewTag(newTag)
+		pBlue("create tag local")
+		_, err := t.git.createTagLocal(newTag)
 		if err != nil {
-			pRed("push new tag fail, %s\n%s", err.Error(), res)
-		} else {
-			pNomarl(res)
+			pRed(err.Error())
+			return
 		}
+		pBlue("push tag to remote")
+		res, err := t.git.pushTagRemote(newTag)
+		if err != nil {
+			pRed(err.Error())
+			return
+		}
+		pNomarl(res)
 	}
 }
 
-func (t *tag) newTagVersion(tags []string, typ verType, preReleasePrefix string) (*version, error) {
-	res, has, err := max(tags, preReleasePrefix)
+// return 1: the new tag
+// return 2: latest tag
+func (t *tag) newTagVersion(tags []string, typ verType, preReleasePrefix string) (*version, *version, error) {
+	res, has, err := latest(tags, preReleasePrefix)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	var ver *version
 	if !has {
 		ver = firstVersion(typ, preReleasePrefix)
-		return ver, nil
+		return ver, nil, nil
 	}
 	ver = res.inc(typ, preReleasePrefix)
-	return ver, nil
+	return ver, res, nil
 }
 
 func (t *tag) getModPrefix() (string, error) {
