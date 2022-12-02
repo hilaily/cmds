@@ -65,15 +65,19 @@ func (g *git) getLocalTags(prefix string) ([]string, error) {
 }
 
 func (g *git) pushNewTag(tag string) (string, error) {
-	c := fmt.Sprintf("git tag %s && git push %s %s", tag, g.upstream, tag)
-	res, err := exec(c)
-	return string(res), err
 	/*
-		res, err := exec("git tag " + tag)
-		if err != nil {
-			return "", fmt.Errorf("new tag fail %w", err)
-		}
-		res2, err = exec(fmt.Sprintf("git push %s %s", g.upstream, tag))
-		return string(res) + "\n" + string(res2), err
+		c := fmt.Sprintf("git tag %s && git push %s %s", tag, g.upstream, tag)
+		res, err := exec(c)
+		return string(res), err
 	*/
+
+	res, err := exec("git tag " + tag)
+	if err != nil {
+		return string(res), fmt.Errorf("new tag fail %w", err)
+	}
+	res2, err := exec(fmt.Sprintf("git push %s %s", g.upstream, tag))
+	if err != nil {
+		return string(res2), fmt.Errorf("push tag fail %w", err)
+	}
+	return string(res) + "\n" + string(res2), nil
 }

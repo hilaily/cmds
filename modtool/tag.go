@@ -30,7 +30,7 @@ func (t *tag) do(cmd string, args ...string) {
 	switch cmd {
 	case "show":
 		t.show()
-	case "newtag":
+	case "new":
 		t.newTag(args...)
 	default:
 		t.help()
@@ -100,7 +100,7 @@ func (t *tag) newTag(args ...string) {
 		pNomarl("try to add new tag")
 		res, err := t.git.pushNewTag(newTag)
 		if err != nil {
-			pRed("push new tag fail, %s", err.Error())
+			pRed("push new tag fail, %s\n%s", err.Error(), res)
 		} else {
 			pNomarl(res)
 		}
