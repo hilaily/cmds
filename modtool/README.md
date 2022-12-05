@@ -45,7 +45,7 @@ modtool tag new beta
 modtool tag new pre
 # v1.2.3 => v1.2.4-pre01
 
-modtool tag -p=false patch
+modtool tag new -p=false patch
 # just print the tag name will create, don't create it really.
 ```
 
