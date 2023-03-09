@@ -15,6 +15,7 @@ func main() {
 		Usage: "to init a new development environment",
 		Commands: []*cli.Command{
 			cmd.BrewCMD,
+			cmd.NvimCMD,
 		},
 		Version: "v0.0.1",
 	}
