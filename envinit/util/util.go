@@ -9,7 +9,7 @@ import (
 )
 
 func CheckLink(softLink, src string) error {
-	f, err := os.Stat(softLink)
+	f, err := os.Lstat(softLink)
 	exist := true
 	if err != nil {
 		exist = os.IsExist(err)
@@ -35,6 +35,9 @@ func CheckLink(softLink, src string) error {
 		color.Green(string(res))
 	}
 	color.Green("create soft link: %s", softLink)
-	exec.Run(fmt.Sprintf("ln -s %s %s", src, softLink))
+	_, err = exec.Run(fmt.Sprintf("ln -s %s %s", src, softLink))
+	if err != nil {
+		return err
+	}
 	return nil
 }
