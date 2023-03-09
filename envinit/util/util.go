@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/fatih/color"
 	"github.com/hilaily/cmds/envinit/exec"
@@ -35,6 +36,10 @@ func CheckLink(softLink, src string) error {
 		color.Green(string(res))
 	}
 	color.Green("create soft link: %s", softLink)
+	_, err = exec.Run("mkdir -p " + filepath.Dir(softLink))
+	if err != nil {
+		return err
+	}
 	_, err = exec.Run(fmt.Sprintf("ln -s %s %s", src, softLink))
 	if err != nil {
 		return err

@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"path/filepath"
+
 	"github.com/fatih/color"
 	"github.com/urfave/cli/v2"
 
@@ -35,5 +37,5 @@ func (n *nvimCMD) install(ctx *cli.Context) error {
 }
 
 func (n *nvimCMD) config(ctx *cli.Context) error {
-	return util.CheckLink(util.HomeDir+"/.config/nvim", util.DotfileDir+"/nvim")
+	return util.CheckLink(filepath.Join(util.HomeDir+"/.config/nvim"), filepath.Join(util.DotfileDir+"/nvim"))
 }
