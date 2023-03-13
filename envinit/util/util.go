@@ -9,6 +9,12 @@ import (
 	"github.com/hilaily/cmds/envinit/exec"
 )
 
+func BrewInstall(name string) {
+	if !exec.CommandIsExist(name) {
+		exec.MustRun("brew install " + name)
+	}
+}
+
 func CheckLink(softLink, src string) error {
 	f, err := os.Lstat(softLink)
 	exist := true

@@ -16,11 +16,16 @@ func main() {
 		Commands: []*cli.Command{
 			cmd.BrewCMD,
 			cmd.NvimCMD,
+			cmd.ZCMD,
 		},
 		Version: "v0.0.1",
 	}
+	defer func() {
+		r := recover()
+		if r != nil {
+			color.Red("%v", r)
+		}
+	}()
 
-	if err := app.Run(os.Args); err != nil {
-		color.Red(err.Error())
-	}
+	_ = app.Run(os.Args)
 }

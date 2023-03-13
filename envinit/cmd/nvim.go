@@ -3,7 +3,6 @@ package cmd
 import (
 	"path/filepath"
 
-	"github.com/fatih/color"
 	"github.com/urfave/cli/v2"
 
 	"github.com/hilaily/cmds/envinit/exec"
@@ -28,14 +27,13 @@ func (n *nvimCMD) cmd() *cli.Command {
 }
 
 func (n *nvimCMD) install(ctx *cli.Context) error {
-	res, err := exec.Run("brew install neovim")
-	if err != nil {
-		return err
-	}
-	color.Green(string(res))
-	return n.config(ctx)
+	exec.MustRun("brew install neovim")
+	n.config(ctx)
+	return nil
 }
 
 func (n *nvimCMD) config(ctx *cli.Context) error {
-	return util.CheckLink(filepath.Join(util.HomeDir+"/.config/nvim"), filepath.Join(util.DotfileDir+"/nvim"))
+	err := util.CheckLink(filepath.Join(util.HomeDir+"/.config/nvim"), filepath.Join(util.DotfileDir+"/nvim"))
+	exec.CheckErr(err)
+	return nil
 }

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 
@@ -9,6 +8,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/hilaily/cmds/envinit/config"
+	selfExec "github.com/hilaily/cmds/envinit/exec"
 )
 
 var (
@@ -42,9 +42,7 @@ func (b *brewCMD) install(ctx *cli.Context) error {
 	c := exec.Command(cmd[0], cmd[1:]...)
 	c.Env = env
 	res, err := c.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("%s %w", string(res), err)
-	}
+	selfExec.CheckErr(err)
 	color.Green(string(res))
 	return nil
 }
