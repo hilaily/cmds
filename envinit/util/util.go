@@ -7,7 +7,18 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/hilaily/cmds/envinit/exec"
+	"github.com/hilaily/kit/pathx"
 )
+
+func SetupDotfile() {
+	if !pathx.IsExist(filepath.Join(HomeDir, "/.dotfile")) {
+		exec.MustRun("git clone https://github.com/hilaily/.dotfile.git ~/.dotfile")
+		exec.MustRun("ln -sf ~/.dotfile/.zshrc ~/")
+		exec.MustRun("ln -sf ~/.dotfile/laily.zsh-theme ~/.oh-my-zsh/themes/")
+		exec.MustRun("ln -sf ~/.dotfile/.tmux.conf ~/")
+		exec.MustRun("ln -sf ~/.dotfile/git/.gitconfig ~/.gitconfig")
+	}
+}
 
 func BrewInstall(name string) {
 	if !exec.CommandIsExist(name) {

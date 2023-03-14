@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/hilaily/cmds/envinit/exec"
-	"github.com/hilaily/cmds/envinit/util"
 	"github.com/urfave/cli/v2"
+
+	"github.com/hilaily/cmds/envinit/util"
 )
 
 var (
@@ -31,7 +31,6 @@ func (g *gitCMD) install(ctx *cli.Context) error {
 }
 
 func (g *gitCMD) config(ctx *cli.Context) error {
-	err := util.CheckLink(util.HomeDir+"/.gitconfig", util.HomeDir+"/.dotfile/git/.gitconfig")
-	exec.CheckErr(err)
+	util.SetupDotfile()
 	return nil
 }

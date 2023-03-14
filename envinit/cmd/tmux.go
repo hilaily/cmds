@@ -24,6 +24,7 @@ func (g *tmuxCMD) cmd() *cli.Command {
 		Usage: "install " + g.name,
 		Subcommands: []*cli.Command{
 			{Name: "install", Action: g.install},
+			{Name: "config", Action: g.config},
 		},
 	}
 }
@@ -34,5 +35,11 @@ func (g *tmuxCMD) install(ctx *cli.Context) error {
 		cmd := fmt.Sprintf("git clone --depth=1 https://github.com/tmux-plugins/tmux-resurrect %s/.tmux/plugins/tmux-resurrect", util.HomeDir)
 		exec.MustRun(cmd)
 	}
+	g.config(ctx)
+	return nil
+}
+
+func (g *tmuxCMD) config(ctx *cli.Context) error {
+	util.SetupDotfile()
 	return nil
 }

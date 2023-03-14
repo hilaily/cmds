@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
 	"strings"
 	"sync"
@@ -11,7 +12,19 @@ import (
 	"github.com/fatih/color"
 )
 
+var (
+	nilWrite  io.Writer
+	nilReader io.Reader
+)
+
 type Printf = func(format string, a ...interface{})
+type Option struct {
+	PWD    string
+	Envs   []string
+	Input  io.Reader
+	Output io.Writer
+	Errput io.Writer
+}
 
 func ToCommand(cmd string) *exec.Cmd {
 	cmds := strings.Fields(cmd)
@@ -34,7 +47,20 @@ func RunWithOutput(cmd string) error {
 	return RunCmdWithOutput(c)
 }
 
-func RunCmdWithOutput(c *exec.Cmd) error {
+func RunCmdWithOutput(cmd *exec.Cmd) error {
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
+	err := cmd.Start()
+	if err != nil {
+		return err
+	}
+
+	return cmd.Wait()
+}
+
+func runCmdWithOutput(c *exec.Cmd) error {
 	color.Green(c.String())
 	stdout, err := c.StdoutPipe()
 	if err != nil {
@@ -54,7 +80,9 @@ func RunCmdWithOutput(c *exec.Cmd) error {
 	flag := false
 
 	go readPipi(wait, stdout, color.Green)
-	go readPipi(wait, stderr, color.Red)
+	go func() {
+		flag = readPipi(wait, stderr, color.Red)
+	}()
 
 	go func() {
 		c.Wait()
@@ -84,7 +112,7 @@ func readPipi(wait *sync.WaitGroup, reader io.Reader, p Printf) bool {
 		wait.Done()
 	}()
 	scanner := bufio.NewScanner(reader)
-	scanner.Split(bufio.ScanWords)
+	scanner.Split(bufio.ScanLines)
 	flag := false
 	for scanner.Scan() {
 		m := scanner.Text()

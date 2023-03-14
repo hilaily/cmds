@@ -33,6 +33,7 @@ func (n *nvimCMD) install(ctx *cli.Context) error {
 }
 
 func (n *nvimCMD) config(ctx *cli.Context) error {
+	util.SetupDotfile()
 	err := util.CheckLink(filepath.Join(util.HomeDir+"/.config/nvim"), filepath.Join(util.DotfileDir+"/nvim"))
 	exec.CheckErr(err)
 	return nil

@@ -15,11 +15,13 @@ func main() {
 		Usage: "to init a new development environment",
 		Commands: []*cli.Command{
 			cmd.BrewCMD,
-			cmd.NvimCMD,
-			cmd.ZCMD,
+			cmd.DotfileCMD,
 			cmd.GitCMD,
-			cmd.TmuxCMD,
 			cmd.GoCMD,
+			cmd.NvimCMD,
+			cmd.TmuxCMD,
+			cmd.ZCMD,
+			cmd.ZSHCMD,
 		},
 		Version: "v0.0.1",
 	}
