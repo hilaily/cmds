@@ -1,21 +1,70 @@
 package exec
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"os/exec"
 	"strings"
+	"sync"
 
 	"github.com/fatih/color"
 )
 
-func Run(cmd string) (string, error) {
+type Printf = func(format string, a ...interface{})
+
+func ToCommand(cmd string) *exec.Cmd {
 	cmds := strings.Fields(cmd)
 	c := exec.Command(cmds[0], cmds[1:]...)
+	return c
+}
+
+func Run(cmd string) (string, error) {
+	c := ToCommand(cmd)
+	color.Green(c.String())
 	res, err := c.CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("%s %w", string(res), err)
 	}
 	return string(res), nil
+}
+
+func RunWithOutput(cmd string) error {
+	c := ToCommand(cmd)
+	return RunCmdWithOutput(c)
+}
+
+func RunCmdWithOutput(c *exec.Cmd) error {
+	color.Green(c.String())
+	stdout, err := c.StdoutPipe()
+	if err != nil {
+		return err
+	}
+	stderr, err := c.StderrPipe()
+	if err != nil {
+		return err
+	}
+
+	if err = c.Start(); err != nil {
+		return err
+	}
+
+	wait := &sync.WaitGroup{}
+	wait.Add(3)
+	flag := false
+
+	go readPipi(wait, stdout, color.Green)
+	go readPipi(wait, stderr, color.Red)
+
+	go func() {
+		c.Wait()
+		wait.Done()
+	}()
+	wait.Wait()
+	if flag {
+		panic("")
+	}
+	return nil
 }
 
 func MustRun(cmd string) {
@@ -28,4 +77,37 @@ func CheckErr(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func readPipi(wait *sync.WaitGroup, reader io.Reader, p Printf) bool {
+	defer func() {
+		wait.Done()
+	}()
+	scanner := bufio.NewScanner(reader)
+	scanner.Split(bufio.ScanWords)
+	flag := false
+	for scanner.Scan() {
+		m := scanner.Text()
+		p(m)
+		flag = true
+	}
+	return flag
+}
+
+func readPipi2(wait *sync.WaitGroup, reader io.Reader, p Printf) bool {
+	defer func() {
+		wait.Done()
+	}()
+	flag := false
+	for {
+		tmp := make([]byte, 1024)
+		_, err := reader.Read(tmp)
+		p(string(tmp))
+		if err != nil {
+			color.Red("read std err fail, %s", err.Error())
+			break
+		}
+		flag = true
+	}
+	return flag
 }

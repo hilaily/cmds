@@ -17,6 +17,9 @@ func main() {
 			cmd.BrewCMD,
 			cmd.NvimCMD,
 			cmd.ZCMD,
+			cmd.GitCMD,
+			cmd.TmuxCMD,
+			cmd.GoCMD,
 		},
 		Version: "v0.0.1",
 	}

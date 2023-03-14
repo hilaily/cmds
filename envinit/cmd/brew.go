@@ -4,7 +4,6 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/fatih/color"
 	"github.com/urfave/cli/v2"
 
 	"github.com/hilaily/cmds/envinit/config"
@@ -41,8 +40,7 @@ func (b *brewCMD) install(ctx *cli.Context) error {
 	}
 	c := exec.Command(cmd[0], cmd[1:]...)
 	c.Env = env
-	res, err := c.CombinedOutput()
+	err := selfExec.RunCmdWithOutput(c)
 	selfExec.CheckErr(err)
-	color.Green(string(res))
 	return nil
 }
