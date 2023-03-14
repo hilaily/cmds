@@ -24,7 +24,7 @@ func (z *zCMD) cmd() *cli.Command {
 
 func (z *zCMD) install(ctx *cli.Context) error {
 	if !pathx.IsExist("/usr/local/z.lua") {
-		exec.MustRun("git clone --depth=1 https://github.com/skywind3000/z.lua.git /usr/local/z.lua")
+		exec.RunWithOutput("sudo git clone --depth=1 https://github.com/skywind3000/z.lua.git /usr/local/z.lua")
 	}
 	return nil
 }

@@ -32,9 +32,19 @@ func ToCommand(cmd string) *exec.Cmd {
 	return c
 }
 
-func Run(cmd string) (string, error) {
+func MustSHRun(cmdStr string, envs ...string) {
+	cmd := exec.Command("sh", "-c", cmdStr)
+	RunCmdWithOutput(cmd, envs...)
+}
+
+func Run(cmd string, envs ...string) (string, error) {
 	c := ToCommand(cmd)
 	color.Green(c.String())
+	env := os.Environ()
+	if len(envs) > 0 {
+		env = append(env, envs...)
+	}
+	c.Env = env
 	res, err := c.CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("%s %w", string(res), err)
@@ -42,16 +52,22 @@ func Run(cmd string) (string, error) {
 	return string(res), nil
 }
 
-func RunWithOutput(cmd string) error {
+func RunWithOutput(cmd string, envs ...string) error {
 	c := ToCommand(cmd)
-	return RunCmdWithOutput(c)
+	return RunCmdWithOutput(c, envs...)
 }
 
-func RunCmdWithOutput(cmd *exec.Cmd) error {
+func RunCmdWithOutput(cmd *exec.Cmd, envs ...string) error {
+	env := os.Environ()
+	if len(envs) > 0 {
+		env = append(env, envs...)
+	}
+	cmd.Env = env
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 
+	io.WriteString(cmd.Stdout, cmd.String())
 	err := cmd.Start()
 	if err != nil {
 		return err
@@ -94,9 +110,8 @@ func runCmdWithOutput(c *exec.Cmd) error {
 	}
 	return nil
 }
-
-func MustRun(cmd string) {
-	res, err := Run(cmd)
+func MustRun(cmd string, envs ...string) {
+	res, err := Run(cmd, envs...)
 	CheckErr(err)
 	color.Green(string(res))
 }

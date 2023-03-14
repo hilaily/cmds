@@ -30,7 +30,8 @@ func (g *tmuxCMD) cmd() *cli.Command {
 }
 
 func (g *tmuxCMD) install(ctx *cli.Context) error {
-	util.CheckLink(util.HomeDir+"/.tmux.conf", util.HomeDir+"/.dotfile/.tmux.conf")
+	exec.RunWithOutput("sudo apt install tmux")
+	g.config(ctx)
 	if !pathx.IsExist(util.HomeDir + "/.tmux/plugins/tmux-resurrect") {
 		cmd := fmt.Sprintf("git clone --depth=1 https://github.com/tmux-plugins/tmux-resurrect %s/.tmux/plugins/tmux-resurrect", util.HomeDir)
 		exec.MustRun(cmd)
@@ -40,6 +41,6 @@ func (g *tmuxCMD) install(ctx *cli.Context) error {
 }
 
 func (g *tmuxCMD) config(ctx *cli.Context) error {
-	util.SetupDotfile()
+	util.CheckLink(util.HomeDir+"/.tmux.conf", util.HomeDir+"/.dotfile/.tmux.conf")
 	return nil
 }

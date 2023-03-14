@@ -11,12 +11,14 @@ import (
 )
 
 func SetupDotfile() {
-	if !pathx.IsExist(filepath.Join(HomeDir, "/.dotfile")) {
-		exec.MustRun("git clone https://github.com/hilaily/.dotfile.git ~/.dotfile")
-		exec.MustRun("ln -sf ~/.dotfile/.zshrc ~/")
-		exec.MustRun("ln -sf ~/.dotfile/laily.zsh-theme ~/.oh-my-zsh/themes/")
-		exec.MustRun("ln -sf ~/.dotfile/.tmux.conf ~/")
-		exec.MustRun("ln -sf ~/.dotfile/git/.gitconfig ~/.gitconfig")
+	tgt := filepath.Join(HomeDir, "/.dotfile")
+	if !pathx.IsExist(tgt) {
+		exec.MustSHRun("git clone https://github.com/hilaily/.dotfile.git "+tgt, "GIT_SSL_NO_VERIFY=true")
+		exec.MustSHRun(`ln -sf ~/.dotfile/.zshrc ~/`)
+		exec.MustSHRun(`mkdir -p ~/.oh-my-zsh/themes/`)
+		exec.MustSHRun(`ln -sf ~/.dotfile/laily.zsh-theme ~/.oh-my-zsh/themes/`)
+		exec.MustSHRun(`ln -sf ~/.dotfile/.tmux.conf ~/`)
+		exec.MustSHRun(`ln -sf ~/.dotfile/git/.gitconfig ~/.gitconfig`)
 	}
 }
 
