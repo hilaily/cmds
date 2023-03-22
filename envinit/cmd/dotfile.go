@@ -37,7 +37,7 @@ func (d *dotfileCMD) update(ctx *cli.Context) error {
 		util.SetupDotfile()
 		return nil
 	}
-	exec.MustRun("cd ~/.dotfile")
-	exec.MustRun("git pull origin master")
+	exec.MustSHRun("cd ~/.dotfile")
+	exec.MustRun("git pull origin master", "GIT_SSL_NO_VERIFY=true")
 	return nil
 }

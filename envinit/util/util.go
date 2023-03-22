@@ -14,6 +14,8 @@ func SetupDotfile() {
 	tgt := filepath.Join(HomeDir, "/.dotfile")
 	if !pathx.IsExist(tgt) {
 		exec.MustSHRun("git clone https://github.com/hilaily/.dotfile.git "+tgt, "GIT_SSL_NO_VERIFY=true")
+
+		exec.MustSHRun("rm -f ~/.zshrc")
 		exec.MustSHRun(`ln -sf ~/.dotfile/.zshrc ~/`)
 		exec.MustSHRun(`mkdir -p ~/.oh-my-zsh/themes/`)
 		exec.MustSHRun(`ln -sf ~/.dotfile/laily.zsh-theme ~/.oh-my-zsh/themes/`)
