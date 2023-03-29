@@ -1,6 +1,8 @@
 package util
 
-import "os"
+import (
+	"os"
+)
 
 var (
 	HomeDir    = os.Getenv("HOME")

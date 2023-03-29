@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"path/filepath"
+	"runtime"
 
 	"github.com/urfave/cli/v2"
 
@@ -21,6 +22,7 @@ func (n *nvimCMD) cmd() *cli.Command {
 		Usage: "mange tool nvim",
 		Subcommands: []*cli.Command{
 			{Name: "install", Action: n.install},
+			{Name: "rawinstall", Action: n.rawInstall},
 			{Name: "config", Action: n.config},
 		},
 	}
@@ -28,6 +30,29 @@ func (n *nvimCMD) cmd() *cli.Command {
 
 func (n *nvimCMD) install(ctx *cli.Context) error {
 	exec.MustRun("brew install neovim")
+	n.config(ctx)
+	return nil
+}
+
+func (n *nvimCMD) rawInstall(ctx *cli.Context) error {
+	url := "https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz"
+	untar := "tar xzvf nvim-linux64.tar.gz"
+	mv := "mv nvim-linux/ /usr/local/"
+	os := runtime.GOOS
+	if os == "darwin" {
+		url = "https://github.com/neovim/neovim/releases/download/stable/nvim-macos.tar.gz"
+		untar = "tar xzvf nvim-macos.tar.gz"
+		mv = "mv nvim-macos/ /usr/local/"
+	}
+	if os == "window" {
+		panic("not support")
+		//url = "https://github.com/neovim/neovim/releases/download/stable/nvim-win64.zip"
+		//untar = "unzip nvim-win64.zip"
+	}
+
+	exec.MustSHRun("cd /tmp/ && wget " + url)
+	exec.MustSHRun(untar)
+	exec.MustSHRun(mv)
 	n.config(ctx)
 	return nil
 }
