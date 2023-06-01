@@ -6,6 +6,8 @@ import (
 	"github.com/hilaily/lib/logrustool"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+
+	"github.com/hilaily/cmds/modtool/service"
 )
 
 func main() {
@@ -14,6 +16,7 @@ func main() {
 		Usage: "some tools to make golang module friendly",
 		Commands: []*cli.Command{
 			tagCommand(),
+			service.RenameCommand(),
 		},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{

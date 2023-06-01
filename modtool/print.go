@@ -42,14 +42,14 @@ func table(data []string, cols int) {
 	writer := tabwriter.NewWriter(os.Stdout, 0, 8, 1, '\t', tabwriter.AlignRight)
 	l := len(data)
 	for i, v := range data {
-		fmt.Fprint(writer, v+"\t")
+		_, _ = fmt.Fprint(writer, v+"\t")
 		if i == l-1 {
 			break
 		}
 		if (i+1)%cols == 0 {
-			fmt.Fprintln(writer)
+			_, _ = fmt.Fprintln(writer)
 		}
 	}
-	fmt.Fprintln(writer)
-	writer.Flush()
+	_, _ = fmt.Fprintln(writer)
+	_ = writer.Flush()
 }

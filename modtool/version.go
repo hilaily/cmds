@@ -55,7 +55,7 @@ func latest(ver []string, preReleasePrefix string) (*version, bool, error) {
 	if preReleasePrefix == "" {
 		return maxOfAll, true, nil
 	}
-	// pre release prefix is not emtpy
+	// pre release prefix is not empty
 	// 1. we don't find version with this prefix,
 	// like v1.2.3, v1.2.4-otherpre01, return v1.2.4-otherpre01
 	if maxOfPre == nil {
@@ -148,7 +148,7 @@ func (v *version) inc(typ verType, preReleasePrefix string) *version {
 	}
 	pre := v.Prerelease()
 	logrus.Debugf("inc: %s,%s", preReleasePrefix, pre)
-	// pre is emtpy, like exist pre: v0.0.1, prefix: beta
+	// pre is empty, like exist pre: v0.0.1, prefix: beta
 	if pre == "" {
 		vv = v.IncPatch()
 		vv, _ = vv.SetPrerelease(preReleasePrefix + "01")
