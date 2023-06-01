@@ -15,6 +15,10 @@ import (
 	"github.com/hilaily/cmds/modtool/common"
 )
 
+var (
+	count = 0
+)
+
 // RenameCommand ...
 func RenameCommand() *cli.Command {
 	return &cli.Command{
@@ -26,7 +30,14 @@ func RenameCommand() *cli.Command {
 
 func rename(ctx *cli.Context) error {
 	oldName := ctx.Args().Get(0)
-	newName := ctx.Args().Get(0)
+	newName := ctx.Args().Get(1)
+
+	if oldName == "" || newName == "" {
+		cmdx.Throw("you should specify a new mod name")
+	}
+	if oldName == newName {
+		cmdx.Throw("old name and new name are same")
+	}
 
 	modFile, err := common.FindModFile()
 	cmdx.CheckErr(err)
@@ -39,13 +50,10 @@ func rename(ctx *cli.Context) error {
 	cmdx.Green("  old mod name: %s", oldName)
 	cmdx.Green("  new mod name: %s", newName)
 
-	if oldName == "" || newName == "" {
-		cmdx.Throw("you should specify a new mod name")
-	}
-
 	// 遍历指定目录下的所有 Go 源代码文件
 	err = dealDir(dir+"/", oldName, newName)
 	cmdx.CheckErr(err)
+	cmdx.Green("rename finished, %d files changed", count)
 	return nil
 }
 
@@ -90,5 +98,6 @@ func dealOneFile(path string, oldName, newName string) error {
 		return err
 	}
 	defer out.Close()
-	return printer.Fprint(out, fset, node)
+	count++
+	return (&printer.Config{Tabwidth: 8, Mode: printer.UseSpaces | printer.TabIndent}).Fprint(out, fset, node)
 }

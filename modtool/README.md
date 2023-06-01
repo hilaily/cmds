@@ -49,3 +49,13 @@ modtool tag new -p=false patch
 # just print the tag name will create, don't create it really.
 ```
 
+##rename subcommand
+
+used to rename a mod.
+
+```bash
+modtool rename <old_name> <new_name>
+```
+
+and then you should modify go.mod manually(this command just modify go source file).
+

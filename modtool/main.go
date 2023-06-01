@@ -1,8 +1,7 @@
 package main
 
 import (
-	"os"
-
+	"github.com/hilaily/lib/cmdx"
 	"github.com/hilaily/lib/logrustool"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
@@ -31,10 +30,8 @@ func main() {
 			}
 			return nil
 		},
-		Version: "v0.0.1",
+		Version: "v0.1.0",
 	}
 
-	if err := app.Run(os.Args); err != nil {
-		pRed(err.Error())
-	}
+	cmdx.WrapCli(app)
 }
