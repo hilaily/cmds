@@ -49,7 +49,7 @@ modtool tag new -p=false patch
 # just print the tag name will create, don't create it really.
 ```
 
-##rename subcommand
+## rename subcommand
 
 used to rename a mod.
 
