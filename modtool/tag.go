@@ -196,8 +196,10 @@ func (t *tag) getModPrefix() (string, error) {
 		}
 		logrus.Debugf("get repo url: %s, mod name: %s", u, t.mod.modName)
 		p := t.mod.getRepoPath(u)
-		logrus.Debug("get repo path: ", p)
-		t._modPrefix = t.mod.getModPrefix(p, t.mod.modName)
+		logrus.Debugf("get repo path: %s", p)
+		pre := t.mod.getModPrefix(p, t.mod.modName)
+		logrus.Debugf("get repo mod prefix:%s", pre)
+		t._modPrefix = pre
 	}
 	return t._modPrefix, nil
 }

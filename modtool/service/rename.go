@@ -83,21 +83,26 @@ func dealOneFile(path string, oldName, newName string) error {
 
 	// 遍历 AST 中的所有 ImportSpec 节点，找到需要替换的包名并进行替换
 	newImports := make([]*ast.ImportSpec, 0, len(node.Imports))
+	change := false
 	for _, vv := range node.Imports {
 		imp := vv
 		if strings.HasPrefix(imp.Path.Value, "\""+oldName) {
 			imp.Path.Value = strings.ReplaceAll(imp.Path.Value, oldName, newName)
+			change = true
 		}
 		newImports = append(newImports, imp)
 	}
 	node.Imports = newImports
 
-	// 将修改后的 AST 输出为 Go 源代码文件
-	out, err := os.Create(path)
-	if err != nil {
-		return err
+	if change {
+		count++
+		// 将修改后的 AST 输出为 Go 源代码文件
+		out, err := os.Create(path)
+		if err != nil {
+			return err
+		}
+		defer out.Close()
+		return (&printer.Config{Tabwidth: 8, Mode: printer.UseSpaces | printer.TabIndent}).Fprint(out, fset, node)
 	}
-	defer out.Close()
-	count++
-	return (&printer.Config{Tabwidth: 8, Mode: printer.UseSpaces | printer.TabIndent}).Fprint(out, fset, node)
+	return nil
 }

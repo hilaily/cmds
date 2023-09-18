@@ -40,10 +40,10 @@ func (g *git) getRemoteTags(prefix string) ([]string, error) {
 		vv := strings.Fields(v)
 		t := strings.ReplaceAll(vv[1], "refs/tags/", "")
 		t = strings.TrimSuffix(t, "^{}")
-		logrus.Debugf("remote res: %v", t)
+		//logrus.Debugf("remote tag: %v", t)
 		if prefix == "" && !strings.Contains(t, "/") ||
 			prefix != "" && strings.HasPrefix(t, prefix) {
-			logrus.Debugf("remote res in: %v", t)
+			logrus.Debugf("remote tag of this mod: %v", t)
 			ret = append(ret, t)
 		}
 	}

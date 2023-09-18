@@ -22,7 +22,12 @@ func (m *mod) getModPrefix(repoPath, modName string) string {
 	if modName == repoPath {
 		return ""
 	}
-	return strings.ReplaceAll(modName, repoPath+"/", "")
+	res := strings.ReplaceAll(modName, repoPath+"/", "")
+	if strings.Contains(res, "/") {
+		// process modname/v2
+		return strings.Split(res, "/")[0]
+	}
+	return res
 }
 
 func (m *mod) getRepoPath(gitRepoURL string) string {

@@ -79,7 +79,7 @@ func sortVer(prefix string, ver []string) ([]string, error) {
 	for _, v := range ver {
 		vv, err := semver.NewVersion(strings.TrimPrefix(v, prefix+"/"))
 		if err != nil {
-			return nil, fmt.Errorf("parse version fail, ver: %s,%w", ver, err)
+			return nil, fmt.Errorf("parse version fail, ver:%s, modname:%s, %w", ver, prefix, err)
 		}
 		arr = append(arr, vv)
 	}
