@@ -1,6 +1,6 @@
 module github.com/hilaily/cmds/modtool
 
-go 1.19
+go 1.21.3
 
 require (
 	github.com/Masterminds/semver v1.5.0
@@ -13,7 +13,7 @@ require (
 	github.com/spf13/cast v1.5.0
 	github.com/stretchr/testify v1.8.1
 	github.com/urfave/cli/v2 v2.23.5
-	golang.org/x/mod v0.7.0
+	golang.org/x/mod v0.13.0
 )
 
 require (
